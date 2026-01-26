@@ -1,0 +1,334 @@
+/* 기본 스타일 설정 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-size: 16px; /* 기본 글자 크기 */
+}
+
+.container {
+    width: 60%;
+    margin: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: #5c5a5a;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-family: 'Do Hyeon', sans-serif;
+    white-space: nowrap; /* 제목 한 줄 고정 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#chat-container {
+    flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
+    max-height: 60vh; /* 화면 높이의 70%까지만 확장 가능 */
+    min-height: 300px; /* 최소 높이 보장 (원하는 값으로 조정 가능) */
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    padding: 15px;
+    overflow-y: auto; /* 내부 내용이 많을 때만 스크롤 */
+    background: #ffffff;
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+.query-input-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 12px;
+    border: 2px solid #3195ff;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+button, .exit-button {
+    height: auto; /* 버튼 높이 자동 조정 */
+    min-height: 50px; /* 최소 높이 보장 */
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+}
+
+button {
+    background-color: #3195ff;
+}
+
+button:hover {
+    background-color: #1976d2;
+}
+
+.exit-button {
+    background-color: #f44336;
+}
+
+.exit-button:hover {
+    background-color: #d32f2f;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #ececec;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.text {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.message.user {
+    background-color: #ececec;
+}
+
+.message.bot {
+    background-color: #ececec;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    font-size: 0.9em;
+    color: #666;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.disclaimer {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    font-size: 0.9em;
+}
+
+.copyright {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* 모바일 환경 최적화 */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px; /* 모바일 화면에 맞게 기본 글자 크기 조정 */
+    }
+
+    .container {
+        width: 90%; /* 모바일 화면 크기에 맞춰 너비 축소 */
+        padding: 10px;
+        height: 100vh; /* 화면 높이에 맞게 컨테이너 설정 */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 위아래 여백을 자동으로 조정 */
+    }
+
+    h1 {
+        font-size: 1.6em; /* 작은 화면에 맞는 제목 크기 */
+        white-space: nowrap;
+        text-align: center; /* 제목 가운데 정렬 */
+    }
+
+    #chat-container {
+        max-height: 60vh; /* 채팅창 최대 높이를 화면의 60%로 제한 */
+        min-height: 280px; /* 최소 높이 보장 */
+        font-size: 1em; /* 글자 크기 조정 */
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .query-input-container {
+        gap: 8px; /* 입력 필드와 버튼 사이 간격 감소 */
+    }
+
+    input[type="text"] {
+        padding: 12px;
+        font-size: 1em;
+    }
+
+    button, .exit-button {
+        font-size: 1em; /* 버튼 글자 크기 조정 */
+        padding: 12px 20px; /* 버튼 크기 조정 */
+        min-height: 50px;
+        margin: 0 6px; /* 버튼 간 간격 추가 */
+    }
+
+    footer {
+        padding: 10px;
+        font-size: 0.9em;
+        border-top: none;
+        box-shadow: none; /* 푸터의 상단 경계 제거 */
+    }
+
+    .disclaimer, .copyright {
+        margin: 0 1em; /* 하단 텍스트 간 여백 설정 */
+    }
+}
+
+/* 모바일 환경 최적화 */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px; /* 모바일 화면에 맞게 기본 글자 크기 조정 */
+    }
+
+    .container {
+        width: 90%; /* 모바일 화면 크기에 맞춰 너비 축소 */
+        padding: 10px;
+        height: 100vh; /* 화면 높이에 맞게 컨테이너 설정 */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 위아래 여백을 자동으로 조정 */
+    }
+
+    h1 {
+        font-size: 1.6em; /* 작은 화면에 맞는 제목 크기 */
+        white-space: nowrap;
+        text-align: center; /* 제목 가운데 정렬 */
+    }
+
+    #chat-container {
+        max-height: 60vh; /* 채팅창 최대 높이를 화면의 60%로 제한 */
+        min-height: 280px; /* 최소 높이 보장 */
+        font-size: 1em; /* 글자 크기 조정 */
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .query-input-container {
+        gap: 8px; /* 입력 필드와 버튼 사이 간격 감소 */
+        display: flex;
+        flex-wrap: nowrap; /* 버튼들이 가로로 나열되게 설정 */
+        justify-content: space-between; /* 버튼들이 나란히 배치되도록 설정 */
+    }
+
+    input[type="text"] {
+        padding: 12px;
+        font-size: 1em;
+    }
+
+    button, .exit-button {
+        font-size: 1em; /* 버튼 글자 크기 조정 */
+        padding: 12px 20px; /* 버튼 크기 조정 */
+        min-height: 50px;
+        margin: 0 6px; /* 버튼 간 간격 추가 */
+    }
+
+    footer {
+        padding: 10px;
+        font-size: 0.9em;
+        border-top: none;
+        box-shadow: none; /* 푸터의 상단 경계 제거 */
+    }
+
+    .disclaimer, .copyright {
+        margin: 0 1em; /* 하단 텍스트 간 여백 설정 */
+    }
+}
+
+/* 작은 화면(스마트폰 최적화) */
+@media screen and (max-width: 1024px) { /* 태블릿 및 스마트폰 공통 적용 */
+    .query-input-container {
+        display: flex;
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        gap: 5px; /* 버튼과 입력칸 사이 간격 */
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1em;
+    }
+
+    input[type="text"] {
+        flex: 0 1 70%; /* 70% 너비 차지 */
+        padding: 10px;
+        font-size: 1em;
+        min-width: 100px;
+    }
+
+    button, .exit-button {
+        flex: 0 1 15%; /* 버튼이 15% 차지 */
+        padding: 12px 20px;
+        min-height: 45px;
+        font-size: 1em;
+        width: auto;
+    }
+}
+
+@media screen and (max-width: 768px) { /* 패드 및 중간 크기 디바이스 대응 */
+    .query-input-container {
+        display: flex;
+        flex-wrap: nowrap; /* 한 줄 유지 */
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+    }
+
+    input[type="text"] {
+        flex: 0 1 70%; /* 70% 너비 차지 */
+    }
+
+    button, .exit-button {
+        flex: 0 15%; /* 버튼이 15% 차지 */
+    }
+}
+
+@media screen and (max-width: 480px) { /* 작은 스마트폰 최적화 */
+    .query-input-container {
+        flex-direction: row; /* 가로 정렬 유지 */
+        flex-wrap: nowrap; /* 한 줄 유지 */
+        align-items: center;
+        gap: 3px;
+    }
+
+    input[type="text"] {
+        flex: 0 1 70%; /* 70% 너비 차지 */
+        width: auto;
+    }
+
+    button, .exit-button {
+        flex: 0 1 15%; /* 버튼이 15% 차지 */
+        width: auto;
+    }
+}
