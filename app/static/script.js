@@ -34,8 +34,7 @@ function addMessage(sender, message, className) {
     avatar.className = 'avatar';
     avatar.src = className === 'user' ? '/static/me.png' :
                  className === 'bot' ? '/static/bot.png' : '';
-    avatar.alt = className === 'user' ? 'User Avatar' :
-                 className === 'bot' ? 'Bot Avatar' : 'Default Avatar';
+    avatar.alt = '';
 
     const textElement = document.createElement('div');
     textElement.className = 'text';
@@ -45,7 +44,7 @@ function addMessage(sender, message, className) {
         let parsed = marked.parse(message);
 
         // 👉 링크가 새 창에서 열리도록 처리
-        parsed = parsed.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
+        parsed = parsed.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" title="새창열림" ');
 
         textElement.innerHTML = `<strong>${sender}:</strong> ${parsed}`;
     } else {
@@ -84,5 +83,4 @@ window.open(
     '/static/popup.html',
     '_blank',
     'width=680,height=600,noopener,noreferrer'
-  );
-  
+  ); 

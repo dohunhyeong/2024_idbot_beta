@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,16 +12,16 @@
 <body>
     <div class="container">
         <h1>
-            <img src="/static/bot.png" alt="Icon" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 0px;">
+            <img src="/static/bot.png" alt="" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 0px;">
             법정감염병 알아보기 챗봇
         </h1>
         <div id="chat-container"></div>
         <div class="query-input-container">
-            <input type="text" id="query-input" placeholder="궁금하신 내용을 물어보세요!">
-            <button onclick="askQuestion()" aria-label="전송 버튼">전송</button>
+            <input type="text" id="query-input" title="질문 입력" placeholder="궁금하신 내용을 물어보세요!">
+            <button onclick="askQuestion()" aria-label="전송">전송</button>
             <div class="exit-button-container">
-                <button onclick="endSession()" class="exit-button" aria-label="사용 종료 버튼">사용 종료</button>
-                </div>  
+                <a href="https://form.naver.com/response/rpBUriQZgtJaRGkyRpUwGQ" target="_blank" rel="noopener noreferrer" class="exit-button" title="새 창에서 열립니다">사용 종료</a>
+            </div>
         </div>
     </div>
     <footer>
@@ -35,11 +35,6 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
     <script src="/static/script.js"></script>
     <script>
-        // 사용종료 버튼 기능
-        function endSession() {
-            window.location.href = "https://form.naver.com/response/rpBUriQZgtJaRGkyRpUwGQ";
-        }
-
         // 모바일 환경 키보드 포커스 최적화
         const queryInput = document.getElementById('query-input');
         queryInput.addEventListener('keypress', function(e) {
