@@ -10,18 +10,9 @@ from langchain_community.vectorstores import FAISS
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
-import pymongo
-
-# -- 데이터베이스 접속
-conn = pymongo.MongoClient(f'mongodb://openai:pw_509@211.54.28.173:37017/openai')
-
-# -- db선택
-db = conn.get_database("openai")
-
-# -- 컬렉션 선택
-collection = db.get_collection('QA_data')
+from langfuse.langchain import CallbackHandler
+from langfuse import observe
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -147,33 +138,21 @@ async def get_message(msg: str):
     return {"received_message": msg}
 
 @app.post("/query")
-async def query_endpoint(request: Request, query_input: QueryInput):
+@observe(name="rag_beta")
+async def query_endpoint(query_input: QueryInput):
     """
     사용자의 질문을 받아 RAG 체인을 통해 답변 생성
     """
     try:
         if rag_chain is None:
             raise RuntimeError("RAG 체인이 초기화되지 않았습니다.")
-        
-        input_date = datetime.now()
-        query_string = query_input.query
-        client_ip = request.client.host
-        
-        result = rag_chain.invoke(query_input.query)
-        output_date = datetime.now()
-        
-        # MongoDB에 로그 저장
-        log_data = {
-            "clientIp": client_ip,
-            "inputDate": input_date,
-            "queryString": query_string,
-            "outputDate": output_date,
-            "result": result
-        }
-        
-        # MongoDB 컬렉션에 로그 데이터 삽입
-        collection.insert_one(log_data)
-        
+
+        langfuse_handler = CallbackHandler()
+        result = rag_chain.invoke(
+            query_input.query,
+            config={"callbacks": [langfuse_handler]}
+        )
+
         return {"answer": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing query: {e}")

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <title>부산광역시 감염병관리지원단 법정감염병 알아보기 챗봇</title>
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
@@ -32,20 +31,7 @@
             ⓒ 2024. Busan CIDC. all rights reserved. Produced by Digital Smart Busan Academy.
         </p>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/static/script.js"></script>
-    <script>
-        // 모바일 환경 키보드 포커스 최적화
-        const queryInput = document.getElementById('query-input');
-        queryInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                askQuestion();
-            }
-        });
-
-        queryInput.addEventListener('touchstart', function() {
-            queryInput.focus();
-        });
-    </script>
 </body>
 </html>

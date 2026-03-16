@@ -19,6 +19,9 @@ async function askQuestion(queryText = null) {
         });
 
         const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.detail || `서버 오류 (${response.status})`);
+        }
         addMessage('Bot', data.answer, 'bot');
     } catch (error) {
         console.error('Error in askQuestion:', error);
