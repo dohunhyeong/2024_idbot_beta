@@ -5,14 +5,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_ollama import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from fastapi.middleware.cors import CORSMiddleware
 from langfuse.langchain import CallbackHandler
-from langfuse import observe
+from langfuse import observe, get_client
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -33,6 +34,9 @@ templates = Jinja2Templates(directory="app/templates")
 # 환경 변수 로드
 load_dotenv()
 
+# Langfuse trace 이름 (환경변수로 설정, 기본값 "s1")
+SYSTEM_NAME = os.getenv("SYSTEM_NAME", "s1")
+
 # 정적 파일 마운트
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -48,59 +52,52 @@ def initialize_chain():
     """
     global rag_chain
 
-    # 파일 경로
-    folder_path = "./data"
+    # 파일 경로 (환경변수로 오버라이드 가능)
+    folder_path = os.getenv("FAISS_FOLDER_PATH", "./data")
 
-    # 1. OpenAI 임베딩 모델 초기화
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+    # 1. 임베딩 모델 초기화 (bge-m3, 1024차원)
+    embeddings = OllamaEmbeddings(model="bge-m3")
 
     # 2. FAISS 데이터베이스 로드
     db = FAISS.load_local(
         folder_path=folder_path,
         embeddings=embeddings,
-        index_name='faiss_index',
+        index_name=os.getenv("FAISS_INDEX_NAME", "faiss_index"),
         allow_dangerous_deserialization=True
     )
 
-    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 2, "fetch_k" : 5})
+    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
     
     # 3. OpenAI LLM 초기화
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
-        temperature=0.5,
-        max_tokens=1500
+        temperature=0
     )
 
     # 4. 프롬프트 템플릿 정의
-    prompt_template = """
-    당신은 감염병 전문가입니다. 반드시 정확한 답을 해주시며, 동일한 질문에는 같은 대답을 해주세요.
+    prompt_template ="""
+        당신은 감염병 일반 전문가입니다.
 
-    Instructions:
-    - 당신에 대해서 물어볼 때만 '법정감염병 알아보기 챗봇입니다.'라고 대답해주세요. 해당 사항 외에는 '법정감염병 알아보기 챗봇입니다.'라는 대답을 할 필요 없습니다.
-    - 인사를 할 땐 인사로 답해주세요.
-    - 반드시 "retriver"에 검색된 문서만을 활용하여 대답해주세요.
-    - 만일 적절한 대답을 발견하지 못했을 때, '잘 모르겠습니다.'로 대답해주세요. 
-    - 아래의 제공된 #Example Format을 참고하여 Markdown 형식으로 대답해주세요.
-    - Include references in the "출처" section using the source's URL from the metadata.
-    - 모든 대답은 한국어로 해주세요.
-
-    #Example Format (in Markdown):
+        반드시 제공된 Context 문서만 사용하여 답변하세요.
+        문서에 없는 내용은 추측하지 마세요.
+        
+        #Example Format (in Markdown):
         (질문에 대한 자세한 답변)
 
         **출처**
         - (URL)
+        
+        Context:
+        {context}
 
-    #Context:
-    {context}
+        Question:
+        {question}
 
-    #Question:
-    {question}
-
-    #Answer (in Markdown):
-    """
+        Answer (한국어):
+        """
     prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
 
-    # 5. 컨텍스트 문서 + 출처 문자열 생성 함수
+# 5. 컨텍스트 문서 + 출처 문자열 생성 함수
     def fetch_context_and_sources(question: str) -> str:
         docs = retriever.invoke(question)
         context_blocks = []
@@ -138,7 +135,7 @@ async def get_message(msg: str):
     return {"received_message": msg}
 
 @app.post("/query")
-@observe(name="rag_beta")
+@observe()
 async def query_endpoint(query_input: QueryInput):
     """
     사용자의 질문을 받아 RAG 체인을 통해 답변 생성
@@ -146,6 +143,8 @@ async def query_endpoint(query_input: QueryInput):
     try:
         if rag_chain is None:
             raise RuntimeError("RAG 체인이 초기화되지 않았습니다.")
+
+        get_client().update_current_span(name=SYSTEM_NAME)
 
         langfuse_handler = CallbackHandler()
         result = rag_chain.invoke(

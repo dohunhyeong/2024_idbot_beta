@@ -21,6 +21,7 @@ jinja2 = ">=3.1.5,<4.0.0"
 langchain = ">=0.3.17,<0.4.0"
 pymongo = "^4.16.0"
 langfuse = "^4.0.0"
+langchain-ollama = ">=0.2,<1.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -29,3 +30,8 @@ build-backend = "poetry.core.masonry.api"
 torch = { url = "https://download.pytorch.org/whl/cu121/torch-2.5.1%2Bcu121-cp311-cp311-win_amd64.whl" }
 torchvision = { url = "https://download.pytorch.org/whl/cu121/torchvision-0.15.2%2Bcu121-cp311-cp311-win_amd64.whl" }
 torchaudio = { url = "https://download.pytorch.org/whl/cu121/torchaudio-2.5.1%2Bcu121-cp311-cp311-win_amd64.whl" }
+
+[dependency-groups]
+dev = [
+    "ipykernel (>=7.2.0,<8.0.0)"
+]
